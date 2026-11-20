@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DarGlobal &amp; Wasalt | Real Estate AI Advisor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    /* =====================================================================
+       CSS VARIABLES
+    ===================================================================== */
+    :root {
+      --bg-dark:       #090D16;
+      --bg-surface:    #111827;
+      --bg-card:       #182234;
+      --bg-card-hover: #1F2C42;
+      --border:        #233148;
+      --gold:          #C5A059;
+      --gold-light:    #DFBF77;
+      --gold-dark:     #9A7733;
+      --text-main:     #F3F4F6;
+      --text-muted:    #94A3B8;
+      --radius-sm:     8px;
+      --radius-md:     12px;
+      --radius-lg:     16px;
+      --shadow:        0 10px 30px -10px rgba(0,0,0,0.5);
+      --header-h:      64px;
+    }
+
+    /* =====================================================================
+       RESET
+    ===================================================================== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-main);
+      overflow: hidden;
+    }
+
+    /* =====================================================================
+       LAYOUT SHELL
+    ===================================================================== */
+    .app-shell {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* =====================================================================
+       HEADER
+    ===================================================================== */
+    header {
+      flex-shrink: 0;
+      height: var(--header-h);
+      background: rgba(17,24,39,0.96);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      z-index: 50;
+    }
+
+    .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+
+    .brand-icon {
+      width: 40px; height: 40px;
+      flex-shrink: 0;
+      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 13px;
+      letter-spacing: -0.5px; color: #000;
+      box-shadow: 0 4px 12px rgba(197,160,89,0.3);
+      white-space: nowrap;
+    }
+
+    .brand-title { min-width: 0; }
+    .brand-title h1 {
+      font-size: 17px; font-weight: 700;
+      letter-spacing: -0.02em;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .brand-title h1 span.gold { color: var(--gold-light); }
+    .brand-title p {
+      font-size: 10px; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap;
+    }
+
+    .header-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 12px; padding: 5px 10px;
+      border-radius: 9999px;
+      background: rgba(197,160,89,0.12);
+      border: 1px solid rgba(197,160,89,0.3);
+      color: var(--gold-light); font-weight: 500; white-space: nowrap;
+    }
+    .badge-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #10B981; box-shadow: 0 0 8px #10B981; flex-shrink: 0;
+    }
+
+    .btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 7px 13px; border-radius: var(--radius-sm);
+      font-size: 13px; font-weight: 500;
+      cursor: pointer; transition: all 0.2s;
+      display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+    }
+    .btn:hover { background: var(--bg-card-hover); border-color: var(--gold); color: var(--gold-light); }
+    .btn-gold {
+      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+      border: none; color: #000; font-weight: 600;
+    }
+    .btn-gold:hover {
+      background: linear-gradient(135deg, var(--gold-light), var(--gold));
+      color: #000; box-shadow: 0 4px 14px rgba(197,160,89,0.4);
+    }
+
+    @media (max-width: 768px) {
+      .badge { display: none; }
+      .btn { padding: 6px 10px; font-size: 12px; }
+    }
+
+    /* =====================================================================
+       MAIN AREA
+    ===================================================================== */
+    .app-main {
+      flex: 1; min-height: 0;
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      overflow: hidden;
+    }
+    @media (max-width: 1024px) {
+      .app-main { grid-template-columns: 1fr; }
+      .properties-sidebar { display: none !important; }
+    }
+
+    /* =====================================================================
+       CHAT SECTION
+    ===================================================================== */
+    .chat-section {
+      display: flex; flex-direction: column;
+      min-height: 0; height: 100%;
+      background: var(--bg-dark);
+      border-right: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .chat-messages {
+      flex: 1; min-height: 0;
+      overflow-y: auto;
+      padding: 20px 24px;
+      display: flex; flex-direction: column;
+      gap: 18px; scroll-behavior: smooth;
+    }
+    .chat-messages::-webkit-scrollbar { width: 5px; }
+    .chat-messages::-webkit-scrollbar-track { background: transparent; }
+    .chat-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 9px; }
+
+    /* Welcome card — stays in message list, pushes down when chat starts */
+    .welcome-card {
+      background: linear-gradient(145deg, #131D2D, #0D1420);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px 26px;
+      position: relative; overflow: hidden;
+      flex-shrink: 0;
+    }
+    .welcome-card::before {
+      content: '';
+      position: absolute; top: 0; right: 0;
+      width: 180px; height: 180px;
+      background: radial-gradient(circle, rgba(197,160,89,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .welcome-card h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px; margin-bottom: 10px;
+      color: var(--gold-light);
+    }
+    .welcome-card p {
+      color: var(--text-muted); font-size: 13.5px;
+      line-height: 1.65; margin-bottom: 16px;
+    }
+    .prompt-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 9999px;
+      padding: 6px 14px; font-size: 12px;
+      color: var(--text-main); cursor: pointer;
+      transition: all 0.2s; user-select: none;
+    }
+    .chip:hover {
+      border-color: var(--gold); color: var(--gold-light);
+      background: var(--bg-card-hover); transform: translateY(-1px);
+    }
+
+    /* External link icon inside chip */
+    .chip-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px; height: 18px;
+      margin-left: 4px;
+      border-radius: 3px;
+      background: rgba(197,160,89,0.15);
+      color: var(--gold-light);
+      font-size: 10px;
+      text-decoration: none;
+      transition: background 0.2s;
+      flex-shrink: 0;
+    }
+    .chip-link:hover {
+      background: rgba(197,160,89,0.35);
+      color: #fff;
+    }
+
+    /* Welcome card fade out */
+    .welcome-card {
+      transition: opacity 0.35s ease, max-height 0.4s ease, padding 0.4s ease, margin 0.4s ease;
+      overflow: hidden;
+    }
+    .welcome-card.hidden {
+      opacity: 0;
+      max-height: 0 !important;
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
+      margin-bottom: 0 !important;
+      pointer-events: none;
+    }
+
+    /* Message bubbles */
+    .message-row {
+      display: flex; gap: 10px;
+      max-width: 90%;
+      animation: fadeSlide 0.25s ease-out;
+    }
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .message-row.user    { align-self: flex-end;   flex-direction: row-reverse; }
+    .message-row.assistant { align-self: flex-start; max-width: 96%; }
+
+    .avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 11px; flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .avatar-user { background: #2563EB; color: #FFF; }
+    .avatar-bot  { background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: #000; }
+
+    .message-content {
+      padding: 13px 17px;
+      border-radius: var(--radius-md);
+      font-size: 14px; line-height: 1.65;
+      word-break: break-word; overflow: hidden;
+      max-width: 100%;
+    }
+    .message-row.user .message-content {
+      background: #1E3A8A; color: #FFF;
+      border-bottom-right-radius: 2px;
+    }
+    .message-row.assistant .message-content {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      border-bottom-left-radius: 2px;
+    }
+
+    /* Typography inside AI messages */
+    .message-content h3 { margin: 14px 0 6px; color: var(--gold-light); font-size: 15px; }
+    .message-content h4 { margin: 10px 0 5px; color: var(--gold-light); font-size: 14px; font-weight: 700; }
+    .message-content p  { margin-bottom: 6px; }
+    .message-content ul, .message-content ol { margin: 5px 0 10px 20px; }
+    .message-content li { margin-bottom: 4px; }
+    .message-content hr { border: none; border-top: 1px solid var(--border); margin: 10px 0; }
+    .message-content a  { color: var(--gold-light); text-decoration: underline; }
+    .message-content strong { font-weight: 700; }
+    .message-content em { font-style: italic; }
+    .message-content code {
+      background: rgba(255,255,255,0.08);
+      padding: 1px 5px; border-radius: 3px; font-size: 12px;
+    }
+
+    /* ---- Markdown Tables ---- */
+    .message-content table {
+      width: 100%; border-collapse: collapse;
+      margin: 8px 0 12px; font-size: 13px;
+      border-radius: 6px; overflow: hidden;
+    }
+    .message-content th {
+      padding: 7px 11px; text-align: left;
+      border-bottom: 2px solid var(--border);
+      color: var(--gold-light); font-weight: 600;
+      background: rgba(197,160,89,0.07);
+      white-space: nowrap;
+    }
+    .message-content td {
+      padding: 6px 11px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      vertical-align: top;
+    }
+    .message-content tr:last-child td { border-bottom: none; }
+    .message-content tr:hover td { background: rgba(255,255,255,0.03); }
+
+    .meta-tag {
+      font-size: 10px; color: var(--text-muted);
+      margin-top: 8px; padding-top: 6px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      display: flex; align-items: center; gap: 5px;
+    }
+    .meta-dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: #10B981; display: inline-block;
+    }
+
+    /* =====================================================================
+       CHAT INPUT
+    ===================================================================== */
+    .chat-input-wrapper {
+      flex-shrink: 0;
+      padding: 14px 20px;
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border);
+    }
+    .input-row { display: flex; align-items: center; gap: 10px; }
+    .input-box {
+      flex: 1;
+      display: flex; align-items: center;
+      background: var(--bg-card);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 8px 12px;
+      transition: border 0.2s, box-shadow 0.2s;
+    }
+    .input-box:focus-within {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(197,160,89,0.15);
+    }
+    .input-box input {
+      flex: 1; background: transparent;
+      border: none; outline: none;
+      color: var(--text-main); font-size: 14px; font-family: inherit;
+    }
+    .input-box input::placeholder { color: var(--text-muted); }
+
+    .send-btn {
+      flex-shrink: 0;
+      width: 42px; height: 42px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+      border: none; border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: #000;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .send-btn:hover { transform: scale(1.06); box-shadow: 0 4px 14px rgba(197,160,89,0.4); }
+    .send-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+    .input-hint {
+      text-align: center; font-size: 11px;
+      color: var(--text-muted); margin-top: 7px;
+    }
+
+    /* =====================================================================
+       SIDEBAR
+    ===================================================================== */
+    .properties-sidebar {
+      display: flex; flex-direction: column;
+      min-height: 0; height: 100%;
+      background: var(--bg-surface);
+      border-left: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .sidebar-header {
+      flex-shrink: 0;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .sidebar-header h3 {
+      font-size: 13px; font-weight: 700;
+      letter-spacing: 0.04em; text-transform: uppercase;
+      color: var(--gold-light);
+    }
+
+    .property-cards-list {
+      flex: 1; min-height: 0;
+      overflow-y: auto;
+      padding: 14px;
+      display: flex; flex-direction: column; gap: 14px;
+    }
+    .property-cards-list::-webkit-scrollbar { width: 4px; }
+    .property-cards-list::-webkit-scrollbar-track { background: transparent; }
+    .property-cards-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 9px; }
+
+    .property-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden; transition: all 0.25s; flex-shrink: 0;
+    }
+    .property-card:hover {
+      border-color: var(--gold);
+      transform: translateY(-2px); box-shadow: var(--shadow);
+    }
+    .card-img-link { display: block; text-decoration: none; cursor: pointer; }
+    .card-img-wrapper { position: relative; height: 130px; overflow: hidden; }
+    .card-img-wrapper img {
+      width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s;
+    }
+    .card-img-link:hover .card-img-wrapper img { transform: scale(1.06); }
+    /* Hover overlay on image */
+    .card-img-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 55%);
+      display: flex; align-items: flex-end; justify-content: flex-end;
+      padding: 8px 10px;
+      opacity: 0; transition: opacity 0.25s;
+    }
+    .card-img-link:hover .card-img-overlay { opacity: 1; }
+    .card-img-overlay span {
+      font-size: 11px; font-weight: 700; color: #fff;
+      background: rgba(197,160,89,0.9);
+      padding: 3px 8px; border-radius: 4px;
+      letter-spacing: 0.03em;
+    }
+
+    .card-portal-badge {
+      position: absolute; top: 8px; left: 8px;
+      padding: 2px 7px; border-radius: 4px;
+      font-size: 9px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .badge-dg { background: rgba(197,160,89,0.9); color: #000; }
+    .badge-ws { background: rgba(0,166,81,0.9);   color: #FFF; }
+
+    .card-price-badge {
+      position: absolute; bottom: 7px; right: 7px;
+      background: rgba(9,13,22,0.88);
+      backdrop-filter: blur(4px);
+      padding: 3px 8px; border-radius: 4px;
+      font-weight: 700; font-size: 11px; color: var(--gold-light);
+      border: 1px solid rgba(197,160,89,0.3);
+      max-width: 160px; overflow: hidden;
+      text-overflow: ellipsis; white-space: nowrap;
+    }
+    .card-body { padding: 12px; display: flex; flex-direction: column; gap: 7px; }
+    .card-title { font-size: 13px; font-weight: 600; line-height: 1.3; }
+    .card-location { font-size: 11px; color: var(--text-muted); }
+    .card-specs {
+      display: flex; gap: 8px; font-size: 11px; color: #CBD5E1;
+      padding: 5px 0;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .card-features { display: flex; flex-wrap: wrap; gap: 4px; }
+    .feature-pill {
+      background: rgba(255,255,255,0.05);
+      padding: 2px 6px; border-radius: 3px;
+      font-size: 9px; color: var(--text-muted);
+    }
+    .card-link {
+      font-size: 12px; color: var(--gold-light);
+      text-decoration: none; font-weight: 600;
+      display: inline-flex; align-items: center; gap: 3px;
+    }
+    .card-link:hover { text-decoration: underline; }
+
+    /* =====================================================================
+       TYPING INDICATOR
+    ===================================================================== */
+    .typing-dots { display: flex; gap: 4px; padding: 4px 6px; }
+    .typing-dot {
+      width: 7px; height: 7px;
+      background: var(--gold); border-radius: 50%;
+      animation: bounce 1.1s infinite ease-in-out;
+    }
+    .typing-dot:nth-child(2) { animation-delay: 0.18s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.36s; }
+    @keyframes bounce {
+      0%, 80%, 100% { transform: scale(0.7); opacity: 0.4; }
+      40%            { transform: scale(1.2); opacity: 1; }
+    }
+
+    /* =====================================================================
+       MODALS
+    ===================================================================== */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.72);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center; justify-content: center;
+      z-index: 200; padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+
+    .modal-content {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      width: 100%; max-width: 860px;
+      max-height: 88vh;
+      display: flex; flex-direction: column;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.75);
+      overflow: hidden;
+    }
+    .modal-header {
+      flex-shrink: 0;
+      padding: 16px 22px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .modal-header h2 { font-size: 17px; font-weight: 700; }
+    .modal-body {
+      flex: 1; min-height: 0;
+      padding: 18px 22px; overflow-y: auto;
+    }
+    .modal-body::-webkit-scrollbar { width: 5px; }
+    .modal-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 9px; }
+
+    .close-btn {
+      background: transparent; border: none;
+      color: var(--text-muted); font-size: 22px;
+      cursor: pointer; line-height: 1;
+      padding: 2px 6px; border-radius: 4px;
+    }
+    .close-btn:hover { color: #FFF; background: rgba(255,255,255,0.08); }
+
+    .catalog-search-row { display: flex; gap: 10px; margin-bottom: 14px; }
+    .catalog-search-row input, .catalog-search-row select {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-main); padding: 8px 12px;
+      font-size: 13px; font-family: inherit; outline: none;
+    }
+    .catalog-search-row input { flex: 1; }
+    .catalog-search-row input:focus, .catalog-search-row select:focus { border-color: var(--gold); }
+    .catalog-search-row select option { background: var(--bg-card); }
+
+    .catalog-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 14px;
+    }
+
+    .settings-field { display: flex; flex-direction: column; gap: 5px; }
+    .settings-field label { font-size: 12px; color: var(--text-muted); }
+    .settings-field input, .settings-field select {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); color: var(--text-main);
+      padding: 9px 12px; font-size: 14px; font-family: inherit;
+      outline: none; width: 100%;
+    }
+    .settings-field input:focus, .settings-field select:focus { border-color: var(--gold); }
+    .settings-field .hint { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+    .settings-actions {
+      display: flex; justify-content: space-between; align-items: center;
+      padding-top: 6px;
+    }
+
+    .sidebar-empty {
+      text-align: center; padding: 30px 16px;
+      color: var(--text-muted); font-size: 13px; line-height: 1.6;
+    }
+    .sidebar-empty svg { opacity: 0.3; margin-bottom: 10px; }
+
+    /* =====================================================================
+       STREAMING CURSOR
+    ===================================================================== */
+    .stream-cursor {
+      display: inline-block;
+      color: var(--gold-light);
+      font-weight: 400;
+      margin-left: 1px;
+      vertical-align: baseline;
+      animation: cursor-blink 0.7s step-end infinite;
+      user-select: none;
+    }
+    .stream-cursor::after {
+      content: '▍';
+    }
+    @keyframes cursor-blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- =========================================================== HEADER -->
+  <header>
+    <div class="brand">
+      <div class="brand-icon">D&amp;W</div>
+      <div class="brand-title">
+        <h1>DarGlobal <span class="gold">&amp;</span> Wasalt</h1>
+        <p>Agentic Luxury &amp; Saudi Property Intelligence</p>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <div class="badge">
+        <span class="badge-dot"></span>
+        <span id="modelBadge">AI Advisor Online</span>
+      </div>
+      <div class="badge" id="listingCountBadge">23 Verified Listings</div>
+      <button class="btn" onclick="openCatalogModal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+        Browse
+      </button>
+      <button class="btn btn-gold" onclick="openSettingsModal()">⚙ Settings</button>
+    </div>
+  </header>
+
+  <!-- ============================================================= MAIN -->
+  <div class="app-main">
+
+    <!-- ------------------------------------------------- CHAT PANE -->
+    <section class="chat-section">
+
+      <!-- Scrollable messages -->
+      <div class="chat-messages" id="chatMessages">
+        <div class="welcome-card" id="welcomeCard">
+          <h2>Welcome to the Property Advisory Assistant</h2>
+          <p>
+            Your AI consultant covering <strong>DarGlobal</strong>'s world-class branded residences
+            (Dubai, London, Muscat, Marbella, Qatar) and <strong>Wasalt</strong>'s verified Saudi
+            real estate listings (Riyadh, Jeddah, KSA). Click a property below or ask me anything!
+          </p>
+          <div class="prompt-chips">
+            <div class="chip" onclick="askQuestion('Show me Pagani Tower residences in Dubai Canal by DarGlobal')">
+              🏎️ Pagani Tower Dubai
+              <a href="https://darglobal.co.uk/davinci-tower-by-pagani" target="_blank" rel="noopener" class="chip-link" onclick="event.stopPropagation()" title="View on DarGlobal">↗</a>
+            </div>
+            <div class="chip" onclick="askQuestion('What luxury villas are in Al Malqa, Riyadh on Wasalt?')">
+              🏡 Villas in Al Malqa
+              <a href="https://wasalt.com/villas-for-sale/riyadh/al-malqa" target="_blank" rel="noopener" class="chip-link" onclick="event.stopPropagation()" title="View on Wasalt">↗</a>
+            </div>
+            <div class="chip" onclick="askQuestion('Show me Lamborghini super-villas in Tierra Viva Spain')">
+              🐂 Lamborghini Villas Marbella
+              <a href="https://darglobal.co.uk/tierra-viva-by-lamborghini" target="_blank" rel="noopener" class="chip-link" onclick="event.stopPropagation()" title="View on DarGlobal">↗</a>
+            </div>
+            <div class="chip" onclick="askQuestion('Find duplex penthouses with Red Sea views in Jeddah')">
+              🌊 Red Sea Penthouses Jeddah
+              <a href="https://wasalt.com/penthouses-for-sale/jeddah/al-shati" target="_blank" rel="noopener" class="chip-link" onclick="event.stopPropagation()" title="View on Wasalt">↗</a>
+            </div>
+            <div class="chip" onclick="askQuestion('Tell me about AIDA Muscat clifftop villas with Trump Golf')">
+              ⛳ AIDA Muscat Trump Villas
+              <a href="https://darglobal.co.uk/aida-oman-trump-villas" target="_blank" rel="noopener" class="chip-link" onclick="event.stopPropagation()" title="View on DarGlobal">↗</a>
+            </div>
+            <div class="chip" onclick="askQuestion('What are prime Mayfair London residences by DarGlobal?')">
+              🇬🇧 The Mulliner London
+              <a href="https://darglobal.co.uk/the-mulliner-149-old-park-lane" target="_blank" rel="noopener" class="chip-link" onclick="event.stopPropagation()" title="View on DarGlobal">↗</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Always-visible chat input -->
+      <div class="chat-input-wrapper">
+        <form id="chatForm" onsubmit="handleChatSubmit(event)">
+          <div class="input-row">
+            <div class="input-box">
+              <input
+                type="text"
+                id="chatInput"
+                placeholder="Ask about properties, pricing, locations, branded suites…"
+                autocomplete="off"
+                autofocus
+              />
+            </div>
+            <button type="submit" class="send-btn" id="sendBtn" title="Send">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+              </svg>
+            </button>
+          </div>
+          <div class="input-hint">✨ Ask about any property, location, price or investment — I'm here to help</div>
+        </form>
+      </div>
+
+    </section>
+
+    <!-- ------------------------------------------------- SIDEBAR -->
+    <aside class="properties-sidebar">
+      <div class="sidebar-header">
+        <h3>Matched Properties</h3>
+        <span class="badge" id="sidebarCount" style="font-size:11px;">Featured</span>
+      </div>
+      <div class="property-cards-list" id="sidebarCardsList">
+        <div class="sidebar-empty">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+          <p>Ask a question to see<br>matched property listings here</p>
+        </div>
+      </div>
+    </aside>
+
+  </div><!-- /.app-main -->
+
+</div><!-- /.app-shell -->
+
+<!-- ========================================================= CATALOG MODAL -->
+<div class="modal-overlay" id="catalogModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Property Directory — DarGlobal &amp; Wasalt</h2>
+      <button class="close-btn" onclick="closeCatalogModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="catalog-search-row">
+        <input type="text" id="catalogSearch" placeholder="Search city, brand, keyword…" oninput="filterCatalog()" />
+        <select id="portalFilter" onchange="filterCatalog()">
+          <option value="">All Portals</option>
+          <option value="DarGlobal">DarGlobal</option>
+          <option value="Wasalt">Wasalt</option>
+        </select>
+      </div>
+      <div class="catalog-grid" id="catalogGrid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================================================= SETTINGS MODAL -->
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal-content" style="max-width:500px;">
+    <div class="modal-header">
+      <h2>Settings &amp; Configuration</h2>
+      <button class="close-btn" onclick="closeSettingsModal()">&times;</button>
+    </div>
+    <div class="modal-body" style="display:flex;flex-direction:column;gap:16px;">
+      <div class="settings-field">
+        <label>OpenRouter API Key</label>
+        <input type="password" id="settingsApiKey" placeholder="sk-or-v1-…" />
+        <span class="hint">
+          Free key at <a href="https://openrouter.ai/keys" target="_blank" style="color:var(--gold-light)">openrouter.ai/keys</a>.
+          To apply permanently, add to <code>.env</code> and restart the server.
+        </span>
+      </div>
+      <div class="settings-field">
+        <label>Preferred Model</label>
+        <select id="settingsModelSelect">
+          <option value="openrouter/free">Auto-Select Best Free Model (Recommended)</option>
+          <option value="google/gemma-4-31b-it:free">Google Gemma 4 31B (Free)</option>
+          <option value="nvidia/nemotron-3-ultra-550b-a55b:free">Nvidia Nemotron 550B (Free)</option>
+          <option value="nvidia/nemotron-3.5-lightning:free">Nvidia Nemotron Lightning (Free)</option>
+          <option value="google/gemma-4-26b-a4b-it:free">Google Gemma 4 26B (Free)</option>
+          <option value="particle-ai/particle-1:free">Particle AI (Free)</option>
+        </select>
+      </div>
+      <div class="settings-actions">
+        <button class="btn" onclick="triggerScraperBackground()">🔄 Sync Data</button>
+        <button class="btn btn-gold" onclick="saveSettings()">Save Settings</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================= SCRIPTS -->
+<script>
+  let conversationHistory = [];
+  let allProperties = [];
+
+  /* ----------------------------------------------------------------
+     FRIENDLY MODEL NAME DISPLAY
+  ---------------------------------------------------------------- */
+  function friendlyModelName(modelId) {
+    if (!modelId) return 'AI Advisor';
+    const map = {
+      'openrouter/free':                       'AI Advisor',
+      'google/gemma-4-31b-it:free':            'Google Gemma 4',
+      'google/gemma-4-26b-a4b-it:free':        'Google Gemma 4',
+      'nvidia/nemotron-3-ultra-550b-a55b:free':'Nvidia Nemotron',
+      'nvidia/nemotron-3.5-lightning:free':    'Nvidia Nemotron',
+      'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free': 'Nvidia Nemotron',
+      'particle-ai/particle-1:free':           'Particle AI',
+      'liquid/lfm-3-1.7b:free':               'Liquid AI',
+      'baidu/ernie-5.5-flash-preview:free':   'Baidu ERNIE',
+      'local-fallback':                        'Local Intelligence Engine',
+      'offline-fallback':                      'Offline Mode',
+    };
+    if (map[modelId]) return map[modelId];
+    // Auto-shorten: take part after '/', remove ':free' suffix
+    const short = (modelId.split('/')[1] || modelId).replace(/:free$/, '').replace(/-/g, ' ');
+    return short.length > 24 ? short.substring(0, 22) + '…' : short;
+  }
+
+  /* ----------------------------------------------------------------
+     INIT
+  ---------------------------------------------------------------- */
+  async function initApp() {
+    try {
+      const [healthRes, propsRes] = await Promise.all([
+        fetch('/api/health'),
+        fetch('/api/properties?limit=50')
+      ]);
+
+      if (healthRes.ok) {
+        const h = await healthRes.json();
+        document.getElementById('listingCountBadge').textContent = `${h.total_properties} Verified Listings`;
+        if (h.primary_model) {
+          document.getElementById('modelBadge').textContent = friendlyModelName(h.primary_model);
+        }
+      }
+
+      if (propsRes.ok) {
+        const data = await propsRes.json();
+        allProperties = data.properties || [];
+        // Sidebar stays empty until user asks a question
+      }
+    } catch (err) {
+      console.error('Init error:', err);
+    }
+  }
+
+  /* ----------------------------------------------------------------
+     SIDEBAR CARDS
+  ---------------------------------------------------------------- */
+  function renderSidebarProperties(properties) {
+    const list = document.getElementById('sidebarCardsList');
+
+    if (!properties || properties.length === 0) {
+      list.innerHTML = `
+        <div class="sidebar-empty">
+          <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+          <p>No matching properties found</p>
+        </div>`;
+      return;
+    }
+
+    document.getElementById('sidebarCount').textContent = `${properties.length} Result${properties.length !== 1 ? 's' : ''}`;
+
+    list.innerHTML = properties.map(p => {
+      const isDg = p.developer_or_portal === 'DarGlobal';
+      const badge = isDg ? 'badge-dg' : 'badge-ws';
+      const feats = (p.key_features || []).slice(0, 3);
+      return `
+        <div class="property-card">
+          <a href="${escHtml(p.source_url)}" target="_blank" rel="noopener noreferrer" class="card-img-link">
+            <div class="card-img-wrapper">
+              <img src="${escHtml(p.image_url)}" alt="${escHtml(p.title)}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&q=60'" />
+              <span class="card-portal-badge ${badge}">${escHtml(p.developer_or_portal)}</span>
+              <span class="card-price-badge">${escHtml(p.price)}</span>
+              <div class="card-img-overlay"><span>View Listing ↗</span></div>
+            </div>
+          </a>
+          <div class="card-body">
+            <div class="card-title">${escHtml(p.title)}</div>
+            <div class="card-location">📍 ${escHtml(p.district)}, ${escHtml(p.city)}</div>
+            <div class="card-specs">
+              <span>🛏 ${escHtml(p.bedrooms)}</span>
+              <span>🚿 ${escHtml(p.bathrooms)} baths</span>
+            </div>
+            <div class="card-features">
+              ${feats.map(f => `<span class="feature-pill">${escHtml(f)}</span>`).join('')}
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  /* ----------------------------------------------------------------
+     CHAT SUBMIT  —  streaming version (token-by-token like ChatGPT)
+  ---------------------------------------------------------------- */
+  async function handleChatSubmit(e) {
+    if (e) e.preventDefault();
+    const input = document.getElementById('chatInput');
+    const message = input.value.trim();
+    if (!message) return;
+
+    input.value = '';
+
+    // Fade out welcome card on first message
+    const wc = document.getElementById('welcomeCard');
+    if (wc && !wc.classList.contains('hidden')) {
+      wc.classList.add('hidden');
+      setTimeout(() => { if (wc.parentNode) wc.parentNode.removeChild(wc); }, 450);
+    }
+
+    appendUserMessage(message);
+    document.getElementById('sendBtn').disabled = true;
+
+    // Create empty AI bubble with blinking cursor immediately
+    const bubbleId = 'stream-' + Date.now();
+    createStreamingBubble(bubbleId);
+
+    let accumulated = '';
+    let finalModel  = '';
+
+    try {
+      const res = await fetch('/api/chat/stream', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ message, history: conversationHistory }),
+      });
+
+      if (!res.ok || !res.body) throw new Error(res.statusText);
+
+      const reader  = res.body.getReader();
+      const decoder = new TextDecoder();
+      let   buffer  = '';
+      let   done_received = false;
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+
+        // SSE events are separated by \n\n (or \r\n\r\n on Windows).
+        // Splitting on single \n breaks when a large JSON payload (e.g. properties
+        // array) contains embedded newlines and spans multiple read() chunks.
+        const events = buffer.split(/\r?\n\r?\n/);
+        buffer = events.pop() ?? '';  // keep incomplete trailing event
+
+        for (const eventBlock of events) {
+          // Extract the "data: ..." line from this SSE event block
+          const dataLine = eventBlock.split(/\r?\n/).find(l => l.startsWith('data: '));
+          if (!dataLine) continue;
+
+          let event;
+          try { event = JSON.parse(dataLine.slice(6)); } catch { continue; }
+
+          if (event.type === 'properties' && event.data?.length) {
+            renderSidebarProperties(event.data);
+
+          } else if (event.type === 'token' && event.data) {
+            accumulated += event.data;
+            updateStreamingBubble(bubbleId, accumulated);
+
+          } else if (event.type === 'done') {
+            finalModel = event.model ?? '';
+            done_received = true;
+            finalizeStreamingBubble(bubbleId, accumulated, finalModel);
+          }
+        }
+      }
+
+      // Safety net: if stream ended without a 'done' event but we have text, finalize
+      if (!done_received && accumulated) {
+        finalizeStreamingBubble(bubbleId, accumulated, finalModel);
+        done_received = true;
+      }
+
+      // Fallback: if truly nothing was received, hit the regular endpoint
+      if (!done_received || !accumulated) {
+        const fb = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message, history: conversationHistory }),
+        });
+        if (fb.ok) {
+          const fbData = await fb.json();
+          accumulated = fbData.response || '';
+          finalModel  = fbData.model   || '';
+          if (fbData.properties?.length) renderSidebarProperties(fbData.properties);
+        }
+        finalizeStreamingBubble(bubbleId, accumulated, finalModel);
+      }
+
+      // Save to history
+      conversationHistory.push({ role: 'user',      content: message });
+      conversationHistory.push({ role: 'assistant', content: accumulated });
+      if (conversationHistory.length > 20)
+        conversationHistory = conversationHistory.slice(-20);
+
+    } catch (err) {
+      finalizeStreamingBubble(bubbleId,
+        '⚠️ Connection error — ensure the FastAPI server is running on port 7860.', '');
+    } finally {
+      document.getElementById('sendBtn').disabled = false;
+      document.getElementById('chatInput').focus();
+    }
+  }
+
+  function askQuestion(query) {
+    document.getElementById('chatInput').value = query;
+    handleChatSubmit(null);
+  }
+
+  /* ----------------------------------------------------------------
+     STREAMING BUBBLE HELPERS
+  ---------------------------------------------------------------- */
+  function createStreamingBubble(id) {
+    const container = document.getElementById('chatMessages');
+    const div = document.createElement('div');
+    div.id = id;
+    div.className = 'message-row assistant';
+    div.innerHTML = `
+      <div class="avatar avatar-bot">AI</div>
+      <div class="message-content" id="${id}-content">
+        <span class="stream-cursor"></span>
+      </div>`;
+    container.appendChild(div);
+    scrollToBottom();
+  }
+
+  function updateStreamingBubble(id, text) {
+    const content = document.getElementById(`${id}-content`);
+    if (!content) return;
+    // Progressive markdown render + blinking cursor at end
+    content.innerHTML = formatMarkdown(text) + '<span class="stream-cursor"></span>';
+    scrollToBottom();
+  }
+
+  function finalizeStreamingBubble(id, text, model) {
+    const content = document.getElementById(`${id}-content`);
+    if (!content) return;
+    const label = model ? friendlyModelName(model) : '';
+    content.innerHTML =
+      formatMarkdown(text || '⚠️ No response received. Please try again.') +
+      (label ? `<div class="meta-tag"><span class="meta-dot"></span> Powered by ${escHtml(label)}</div>` : '');
+    scrollToBottom();
+  }
+
+  /* ----------------------------------------------------------------
+     MESSAGE RENDERING
+  ---------------------------------------------------------------- */
+  function appendUserMessage(text) {
+    const container = document.getElementById('chatMessages');
+    const div = document.createElement('div');
+    div.className = 'message-row user';
+    div.innerHTML = `
+      <div class="avatar avatar-user">You</div>
+      <div class="message-content">${escHtml(text)}</div>`;
+    container.appendChild(div);
+    scrollToBottom();
+  }
+
+  function appendAssistantMessage(markdown, model) {
+    const container = document.getElementById('chatMessages');
+    const div = document.createElement('div');
+    div.className = 'message-row assistant';
+    const label = model ? friendlyModelName(model) : '';
+    div.innerHTML = `
+      <div class="avatar avatar-bot">AI</div>
+      <div class="message-content">
+        ${formatMarkdown(markdown)}
+        ${label ? `<div class="meta-tag"><span class="meta-dot"></span> Powered by ${escHtml(label)}</div>` : ''}
+      </div>`;
+    container.appendChild(div);
+    scrollToBottom();
+  }
+
+  function appendTypingIndicator() {
+    const container = document.getElementById('chatMessages');
+    const id = 'typing-' + Date.now();
+    const div = document.createElement('div');
+    div.id = id;
+    div.className = 'message-row assistant';
+    div.innerHTML = `
+      <div class="avatar avatar-bot">AI</div>
+      <div class="message-content">
+        <div class="typing-dots">
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+        </div>
+      </div>`;
+    container.appendChild(div);
+    scrollToBottom();
+    return id;
+  }
+
+  function removeTypingIndicator(id) {
+    const el = document.getElementById(id);
+    if (el) el.remove();
+  }
+
+  function scrollToBottom() {
+    const c = document.getElementById('chatMessages');
+    c.scrollTop = c.scrollHeight;
+  }
+
+  /* ----------------------------------------------------------------
+     MARKDOWN FORMATTER — full support: tables, headings, lists, bold
+  ---------------------------------------------------------------- */
+  function formatMarkdown(text) {
+    if (!text) return '';
+
+    const lines = text.split('\n');
+    let html = '';
+    let i = 0;
+
+    while (i < lines.length) {
+      const line = lines[i];
+
+      // Horizontal rule
+      if (/^---+$/.test(line.trim())) {
+        html += '<hr>';
+        i++; continue;
+      }
+
+      // Headings
+      if (/^### /.test(line)) {
+        html += `<h4>${inlineFormat(line.slice(4))}</h4>`;
+        i++; continue;
+      }
+      if (/^## /.test(line)) {
+        html += `<h3>${inlineFormat(line.slice(3))}</h3>`;
+        i++; continue;
+      }
+      if (/^# /.test(line)) {
+        html += `<h3>${inlineFormat(line.slice(2))}</h3>`;
+        i++; continue;
+      }
+
+      // Markdown table (lines starting with |)
+      if (/^\|/.test(line)) {
+        const tableLines = [];
+        while (i < lines.length && /^\|/.test(lines[i])) {
+          tableLines.push(lines[i]);
+          i++;
+        }
+        // Filter out separator rows (---|---|)
+        const dataRows = tableLines.filter(l => !/^\|[\s\-:]+\|/.test(l.replace(/[a-zA-Z0-9]/g, 'x')));
+        if (dataRows.length > 0) {
+          html += '<table>';
+          dataRows.forEach((row, ri) => {
+            const cells = row.split('|').slice(1, -1).map(c => c.trim());
+            const tag = ri === 0 ? 'th' : 'td';
+            html += `<tr>${cells.map(c => `<${tag}>${inlineFormat(c)}</${tag}>`).join('')}</tr>`;
+          });
+          html += '</table>';
+        }
+        continue;
+      }
+
+      // Bullet list
+      if (/^[\*\-] /.test(line)) {
+        html += '<ul>';
+        while (i < lines.length && /^[\*\-] /.test(lines[i])) {
+          html += `<li>${inlineFormat(lines[i].slice(2))}</li>`;
+          i++;
+        }
+        html += '</ul>';
+        continue;
+      }
+
+      // Numbered list
+      if (/^\d+\. /.test(line)) {
+        html += '<ol>';
+        while (i < lines.length && /^\d+\. /.test(lines[i])) {
+          html += `<li>${inlineFormat(lines[i].replace(/^\d+\. /, ''))}</li>`;
+          i++;
+        }
+        html += '</ol>';
+        continue;
+      }
+
+      // Empty line
+      if (line.trim() === '') {
+        html += '<br>';
+        i++; continue;
+      }
+
+      // Normal paragraph
+      html += `<p>${inlineFormat(line)}</p>`;
+      i++;
+    }
+
+    return html;
+  }
+
+  function inlineFormat(text) {
+    let s = escHtml(text);
+    s = s.replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>');
+    s = s.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    s = s.replace(/\*([^*\n]+?)\*/g, '<em>$1</em>');
+    s = s.replace(/`([^`]+)`/g, '<code>$1</code>');
+    s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g,
+      '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+    return s;
+  }
+
+  /* ----------------------------------------------------------------
+     SAFE HTML ESCAPE
+  ---------------------------------------------------------------- */
+  function escHtml(str) {
+    return String(str ?? '').replace(/[&<>"']/g, c => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
+  }
+
+  /* ----------------------------------------------------------------
+     CATALOG MODAL
+  ---------------------------------------------------------------- */
+  function openCatalogModal() {
+    document.getElementById('catalogModal').classList.add('open');
+    renderCatalogGrid(allProperties);
+  }
+  function closeCatalogModal() {
+    document.getElementById('catalogModal').classList.remove('open');
+  }
+
+  function renderCatalogGrid(props) {
+    const grid = document.getElementById('catalogGrid');
+    if (!props.length) {
+      grid.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">No properties found.</p>';
+      return;
+    }
+    grid.innerHTML = props.map(p => {
+      const isDg = p.developer_or_portal === 'DarGlobal';
+      return `
+        <div class="property-card">
+          <div class="card-img-wrapper" style="height:110px;">
+            <img src="${escHtml(p.image_url)}" alt="${escHtml(p.title)}" loading="lazy"
+              onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400&q=60'" />
+            <span class="card-portal-badge ${isDg ? 'badge-dg' : 'badge-ws'}">${escHtml(p.developer_or_portal)}</span>
+            <span class="card-price-badge">${escHtml(p.price)}</span>
+          </div>
+          <div class="card-body">
+            <div class="card-title" style="font-size:12px;">${escHtml(p.title)}</div>
+            <div class="card-location">${escHtml(p.district)}, ${escHtml(p.city)}</div>
+            <a href="${escHtml(p.source_url)}" target="_blank" rel="noopener noreferrer"
+               class="card-link" style="margin-top:4px;">View Details &rarr;</a>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function filterCatalog() {
+    const q = document.getElementById('catalogSearch').value.toLowerCase();
+    const portal = document.getElementById('portalFilter').value;
+    const filtered = allProperties.filter(p => {
+      const matchPortal = !portal || p.developer_or_portal === portal;
+      const matchQ = !q ||
+        p.title.toLowerCase().includes(q) ||
+        p.city.toLowerCase().includes(q) ||
+        p.district.toLowerCase().includes(q) ||
+        (p.property_type || '').toLowerCase().includes(q);
+      return matchPortal && matchQ;
+    });
+    renderCatalogGrid(filtered);
+  }
+
+  /* ----------------------------------------------------------------
+     SETTINGS MODAL
+  ---------------------------------------------------------------- */
+  function openSettingsModal() {
+    document.getElementById('settingsModal').classList.add('open');
+  }
+  function closeSettingsModal() {
+    document.getElementById('settingsModal').classList.remove('open');
+  }
+  function saveSettings() {
+    const model = document.getElementById('settingsModelSelect').value;
+    if (model) {
+      document.getElementById('modelBadge').textContent = friendlyModelName(model);
+    }
+    closeSettingsModal();
+    alert('⚠️  UI label updated.\nTo apply the model permanently, edit your .env file and restart the server.');
+  }
+
+  async function triggerScraperBackground() {
+    try {
+      const res = await fetch('/api/scrape?source=all', { method: 'POST' });
+      if (res.ok) {
+        alert('✅ Data sync initiated in background. Properties will refresh shortly.');
+      } else {
+        alert('⚠️ Failed to trigger data sync.');
+      }
+    } catch {
+      alert('⚠️ Could not reach server.');
+    }
+  }
+
+  /* ----------------------------------------------------------------
+     CLOSE MODALS ON BACKDROP CLICK
+  ---------------------------------------------------------------- */
+  document.addEventListener('click', e => {
+    if (e.target.classList.contains('modal-overlay')) {
+      e.target.classList.remove('open');
+    }
+  });
+
+  /* ----------------------------------------------------------------
+     BOOT
+  ---------------------------------------------------------------- */
+  window.addEventListener('DOMContentLoaded', initApp);
+</script>
+</body>
+</html>
