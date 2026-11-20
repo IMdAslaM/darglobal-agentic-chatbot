@@ -1,0 +1,51 @@
+# Environment Variables — NEVER commit these
+.env
+.env.local
+
+# Scratch / temp test files
+scratch/
+test_local.py
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments & dependencies
+node_modules/
+
+# IDE & Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Vector store & temporary caches
+.chroma/
+*.db
+*.sqlite3
